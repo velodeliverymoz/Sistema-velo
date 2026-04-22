@@ -4,7 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <meta name="theme-color" content="#e0000f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Velo Delivery">
+    <meta name="application-name" content="Velo Delivery Moz">
+    <meta name="description" content="Sistema de Gestão de Taxistas - VELO DELIVERY MOZ">
+    
     <title>Velo Delivery Moz - Gestão Cloud</title>
+    
+    <!-- Ícones para todos os dispositivos -->
+    <link rel="icon" type="image/png" sizes="16x16" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png">
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -580,6 +605,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
+    // ========== REGISTAR SERVICE WORKER PARA PWA ==========
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+            console.log('Service Worker registado!', reg);
+        }).catch(function(err) {
+            console.log('Service Worker falhou:', err);
+        });
+    }
+    
     // ========== VARIÁVEIS GLOBAIS ==========
     let currentUser = null;
     let taxistas = [];
@@ -644,7 +678,7 @@
         return diasUteis;
     }
     
-    // ========== INICIALIZAR DADOS NO FIREBASE (APENAS UMA VEZ) ==========
+    // ========== INICIALIZAR DADOS NO FIREBASE ==========
     async function inicializarDadosFirebase() {
         if (dadosInicializados) return;
         
@@ -920,7 +954,7 @@
         const dividaAnual = calcularDividaAnual(taxistaId);
         const dividaAtual = calcularDivida(taxistaId);
         
-        let conteudo = `<div class="pdf-content"><div class="logo-header"><img src="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png" alt="Velo Delivery Moz"><h1>VELO DELIVERY MOZ</h1></div><h2>RELATÓRIO INDIVIDUAL DE PAGAMENTOS</h2><p><strong>Taxista:</strong> ${t.nome}</p><p><strong>Tipo:</strong> ${t.tipo === 'externo' ? '🌍 Externo (Segunda a Sexta)' : '🏢 Interno (Segunda a Sábado)'}</p><p><strong>Matrícula:</strong> ${t.moto || 'Não registada'}</p><p><strong>Data de Início:</strong> ${t.inicio}</p><p><strong>Meta diária:</strong> ${fmtMoeda(t.receita)}</p><p><strong>Período:</strong> ${meses[mes]} ${ano}</p><hr><h3>📊 RESUMO FINANCEIRO</h3><table style="width:100%"><tr><td style="width:50%"><strong>💰 Valor esperado:</strong></td><td style="text-align:right">${fmtMoeda(valorEsperadoMes)}</td></tr><tr><td style="width:50%"><strong>✅ Total pago:</strong></td><td style="text-align:right">${fmtMoeda(totalPago)}</td></tr><tr><td style="width:50%"><strong>📉 Dívida do mês:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(Math.max(0, valorEsperadoMes - totalPago))}</td></tr><tr><td style="width:50%"><strong>⚠️ Dívida acumulada:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAtual)}</td></tr><tr><td style="width:50%"><strong>🏆 DÍVIDA TOTAL ANUAL:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAnual)}</td></tr></table><hr><h3>📋 Histórico de Pagamentos - ${meses[mes]} ${ano}</h3><table style="width:100%"><thead><tr><th>Data</th><th>Valor Pago</th><th>Gestor</th><th>Observação</th></tr></thead><tbody>`;
+        let conteudo = `<div class="pdf-content"><div class="logo-header"><img src="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png" alt="Velo Delivery Moz"><h1>VELO DELIVERY MOZ</h1></div><h2>RELATÓRIO INDIVIDUAL DE PAGAMENTOS</h2><p><strong>Taxista:</strong> ${t.nome}</p><p><strong>Tipo:</strong> ${t.tipo === 'externo' ? '🌍 Externo (Segunda a Sexta)' : '🏢 Interno (Segunda a Sábado)'}</p><p><strong>Matrícula:</strong> ${t.moto || 'Não registada'}</p><p><strong>Data de Início:</strong> ${t.inicio}</p><p><strong>Meta diária:</strong> ${fmtMoeda(t.receita)}</p><p><strong>Período:</strong> ${meses[mes]} ${ano}</p><hr><h3>📊 RESUMO FINANCEIRO</h3><table style="width:100%"><tr><td style="width:50%"><strong>💰 Valor esperado:</strong></td><td style="text-align:right">${fmtMoeda(valorEsperadoMes)}</td></tr><td><strong>✅ Total pago:</strong></td><td style="text-align:right">${fmtMoeda(totalPago)}</td></tr><tr><td style="width:50%"><strong>📉 Dívida do mês:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(Math.max(0, valorEsperadoMes - totalPago))}</td></tr><tr><td style="width:50%"><strong>⚠️ Dívida acumulada:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAtual)}</td></tr><tr><td style="width:50%"><strong>🏆 DÍVIDA TOTAL ANUAL:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAnual)}</td></tr></table><hr><h3>📋 Histórico de Pagamentos - ${meses[mes]} ${ano}</h3><table style="width:100%"><thead><tr><th>Data</th><th>Valor Pago</th><th>Gestor</th><th>Observação</th></tr></thead><tbody>`;
         if (pagamentosMes.length === 0) conteudo += `<tr><td colspan="4" style="text-align:center">Sem pagamentos registados</td></tr>`;
         else for (const p of pagamentosMes.sort((a, b) => new Date(a.data) - new Date(b.data))) conteudo += `<tr><td>${p.data}</td><td><strong>${fmtMoeda(p.valor)}</strong></td><td>${p.gestor || '-'}</td><td>${p.observacao || '-'}</td></tr>`;
         conteudo += `</tbody><tfoot><tr class="total"><td colspan="1"><strong>TOTAL</strong></td><td colspan="3"><strong>${fmtMoeda(totalPago)}</strong></td></tr></tfoot></table><div class="footer">Documento gerado em ${new Date().toLocaleString('pt-MZ')}</div></div>`;
@@ -1288,4 +1322,4 @@
     document.getElementById('statusMsg').innerHTML = '✅ Firebase conectado! Pronto para usar.';
 </script>
 </body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                     </html>
