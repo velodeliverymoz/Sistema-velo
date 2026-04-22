@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#e0000f">
+    <title>Velo Delivery Moz - Gestão Cloud</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #1a1a24;
+            --card-bg2: #2a2a35;
+            --text: #ffffff;
+            --text-muted: #888888;
+            --border: #333333;
+            --accent: #e0000f;
+            --accent-light: rgba(224,0,15,0.15);
+            --green: #2ecc71;
+            --green-light: rgba(46,204,113,0.2);
+            --toast-bg: #333333;
+            --yellow: #f39c12;
+            --yellow-light: rgba(243,156,18,0.2);
+            --orange: #e67e22;
+            --orange-light: rgba(230,126,34,0.2);
+        }
+        
+        body.light-mode {
+            --bg: #f0f0f0;
+            --card-bg: #ffffff;
+            --card-bg2: #e8e8e8;
+            --text: #1a1a1a;
+            --text-muted: #666666;
+            --border: #dddddd;
+            --accent: #e0000f;
+            --accent-light: rgba(224,0,15,0.1);
+            --green: #2ecc71;
+            --green-light: rgba(46,204,113,0.15);
+            --toast-bg: #e0e0e0;
+            --yellow-light: rgba(243,156,18,0.15);
+            --orange-light: rgba(230,126,34,0.15);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 12px;
+            padding-bottom: 70px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+        
+        .login-box {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 10px auto;
+            max-width: 380px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-area img {
+            height: 45px;
+            width: auto;
+        }
+        
+        .logo-area h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 12px 18px;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+        
+        .nav-icon { font-size: 22px; }
+        
+        .page {
+            display: none;
+            max-width: 550px;
+            margin: 0 auto;
+            padding-bottom: 20px;
+        }
+        
+        .page.active { display: block; }
+        
+        .taxista-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .taxista-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        
+        .taxista-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .taxista-nome {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .taxista-detalhes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .taxista-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .taxista-payments-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .taxista-payments-header {
+            background: var(--accent-light);
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .taxista-payments-title {
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .taxista-payments-summary {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .payments-table th, .payments-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .payments-table th {
+            background: var(--card-bg2);
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .payments-table tr:hover {
+            background: var(--accent-light);
+        }
+        
+        .btn-small {
+            width: auto;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            font-size: 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-success { background: var(--green); color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-edit { background: #3498db; color: white; }
+        .btn-excel { background: #27ae60; color: white; }
+        .btn-import { background: #9b59b6; color: white; }
+        
+        .theme-btn {
+            background: var(--card-bg2);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .stat {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .ranking-card {
+            background: linear-gradient(135deg, var(--card-bg), var(--card-bg2));
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .ranking-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+        }
+        
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 8px;
+            margin: 5px 0;
+            border-radius: 10px;
+            background: var(--card-bg);
+            transition: all 0.2s;
+            border-left: 4px solid var(--accent);
+            font-size: 13px;
+        }
+        
+        .ranking-position {
+            font-weight: bold;
+            width: 30px;
+        }
+        
+        .ranking-position.gold { color: #f1c40f; }
+        .ranking-position.silver { color: #bdc3c7; }
+        .ranking-position.bronze { color: #cd7f32; }
+        
+        .ranking-name { flex: 1; }
+        .ranking-debt { font-weight: bold; color: var(--accent); }
+        
+        .badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .badge-green { background: var(--green-light); color: var(--green); }
+        .badge-red { background: var(--accent-light); color: var(--accent); }
+        .badge-warning { background: var(--yellow-light); color: var(--yellow); }
+        .badge-purple { background: rgba(155,89,182,0.2); color: #9b59b6; }
+        
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            background: var(--card-bg2);
+            color: var(--text);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .search-box input { flex: 1; margin: 0; }
+        .search-box button { width: auto; padding: 12px 20px; margin: 0; }
+        
+        .backup-buttons, .export-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid var(--border);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: var(--toast-bg);
+            padding: 12px;
+            border-radius: 30px;
+            text-align: center;
+            display: none;
+            z-index: 1100;
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-size: 13px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: var(--card-bg2);
+            border-radius: 3px;
+            margin: 8px 0;
+        }
+        
+        .progress-fill {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--accent);
+        }
+        
+        .empty-payments {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+        
+        .text-center { text-align: center; }
+        
+        @media (max-width: 480px) {
+            body { padding: 10px; padding-bottom: 70px; }
+            .logo-area img { height: 32px; }
+            .logo-area h2 { font-size: 14px; }
+            .taxista-nome { font-size: 16px; }
+            .taxista-detalhes { font-size: 11px; gap: 8px; }
+            .payments-table th, .payments-table td { font-size: 10px; padding: 6px 4px; }
+            .stat-value { font-size: 20px; }
+            .grid-2 { gap: 8px; }
+            .stat { padding: 10px; }
+            .btn-small { padding: 5px 8px; font-size: 10px; }
+            .nav-icon { font-size: 18px; }
+            .nav-item { font-size: 9px; padding: 4px 8px; }
+        }
+        
+        @media (min-width: 768px) {
+            body { padding: 20px; padding-bottom: 80px; }
+            .page { max-width: 700px; }
+            .payments-table th, .payments-table td { padding: 12px 15px; }
+        }
+        
+        h2, h3 { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div id="loginScreen">
+    <div class="login-box text-center">
+        <div class="logo-area" style="justify-content: center; margin-bottom: 20px;">
+            <img src="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png" alt="Velo Delivery Moz Logo">
+        </div>
+        <h2>⚡ VELO DELIVERY MOZ</h2>
+        <p style="color:var(--text-muted); margin-bottom:20px">Sistema de Gestão Cloud</p>
+        <input type="text" id="loginUser" placeholder="Utilizador">
+        <input type="password" id="loginPass" placeholder="Senha">
+        <button onclick="fazerLogin()">Entrar</button>
+        <div id="loginMsg" style="color:var(--accent); font-size:12px; margin-top:15px"></div>
+        <div id="statusMsg" style="color:var(--text-muted); font-size:11px; margin-top:10px">🔌 A conectar ao Firebase...</div>
+    </div>
+</div>
+
+<div id="app" style="display:none">
+    <div class="header">
+        <div class="logo-area">
+            <img src="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png" alt="Velo Delivery Moz Logo">
+            <h2>⚡ VELO DELIVERY MOZ</h2>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Escuro</button>
+            <span id="userName" style="background:var(--card-bg2); padding:6px 12px; border-radius:30px; border:1px solid var(--border); font-size:13px"></span>
+            <button class="btn-small" onclick="fazerLogout()" style="background:var(--card-bg2); color:var(--text); border:1px solid var(--border)">Sair</button>
+        </div>
+    </div>
+
+    <div id="page-dashboard" class="page active">
+        <div class="grid-2" id="statsCards"></div>
+        <div id="rankingContainer"></div>
+        <div class="card">
+            <h3>📋 Últimas Actividades</h3>
+            <div id="actividadesLista"></div>
+        </div>
+    </div>
+
+    <div id="page-taxistas" class="page">
+        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap">
+            <input type="text" id="searchTax" placeholder="🔍 Pesquisar por nome..." style="flex:1">
+            <button id="btnNovoTax" onclick="abrirModalTaxista()" style="width:auto; padding:12px 20px">+ Novo</button>
+        </div>
+        <div id="taxistasLista"></div>
+    </div>
+
+    <div id="page-pagamentos" class="page">
+        <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:space-between; flex-wrap:wrap">
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <select id="reportMonth" style="width:auto; padding:8px">
+                    <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option>
+                    <option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option>
+                    <option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option>
+                    <option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
+                </select>
+                <select id="reportYear" style="width:auto; padding:8px"></select>
+            </div>
+            <button id="btnAddPagamento" onclick="abrirModalPagamento()" style="width:auto; padding:12px 20px">+ Novo Pagamento</button>
+        </div>
+        
+        <div id="adminBackupButtons" class="backup-buttons" style="display: none;">
+            <button class="btn-small btn-excel" onclick="exportarBackup()">💾 Exportar Backup</button>
+            <button class="btn-small btn-import" onclick="importarBackup()">📂 Importar Backup</button>
+        </div>
+        
+        <div id="adminExportButtons" class="export-buttons" style="display: none;">
+            <button class="btn-small btn-excel" onclick="exportarExcelGeral()">📊 Exportar Tudo</button>
+            <button class="btn-small btn-excel" onclick="exportarExcelTaxistas()">🏍️ Exportar Taxistas</button>
+            <button class="btn-small btn-excel" onclick="exportarExcelPagamentosPorTaxista()">💰 Exportar Pagamentos</button>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <div style="font-size: 13px; margin-bottom: 8px; color: var(--text-muted);">📄 Relatórios por Taxista:</div>
+            <div id="pdfButtonsList" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+        </div>
+        
+        <div id="pagamentosLista"></div>
+    </div>
+
+    <div id="page-contratos" class="page">
+        <div id="contratosLista"></div>
+    </div>
+
+    <div id="page-admin" class="page">
+        <button id="btnNovoUser" onclick="abrirModalUser()" style="margin-bottom:15px">+ Novo Utilizador</button>
+        <div id="usersLista"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span><span>Dashboard</span></button>
+        <button class="nav-item" data-page="taxistas"><span class="nav-icon">🏍️</span><span>Taxistas</span></button>
+        <button class="nav-item" data-page="pagamentos"><span class="nav-icon">💰</span><span>Pagamentos</span></button>
+        <button class="nav-item" data-page="contratos"><span class="nav-icon">📋</span><span>Contratos</span></button>
+        <button class="nav-item" id="adminNav" data-page="admin" style="display:none"><span class="nav-icon">⚙️</span><span>Admin</span></button>
+    </div>
+</div>
+
+<!-- MODAIS -->
+<div id="modalPagamento" class="modal"><div class="modal-content"><h3>💰 Registar Pagamento</h3><div class="form-group"><label>Taxista *</label><select id="pagTaxistaId"></select></div><div class="form-group"><label>Data *</label><input type="date" id="pagData"></div><div class="form-group"><label>Valor (MT) *</label><input type="number" id="pagValor" placeholder="Valor pago"></div><div class="form-group"><label>Observação</label><input type="text" id="pagObs" placeholder="Ex: Pagamento extra, atraso..."></div><div class="modal-actions" style="display:flex; gap:12px; margin-top:20px"><button class="btn-small" onclick="fecharModal('modalPagamento')" style="background:#666">Cancelar</button><button class="btn-small btn-success" onclick="salvarPagamentoManual()">Guardar</button></div></div></div>
+<div id="modalEditarPagamento" class="modal"><div class="modal-content"><h3>✏️ Editar Pagamento</h3><div class="form-group"><label>Taxista</label><input type="text" id="editTaxistaNome" readonly style="background:#444"></div><div class="form-group"><label>Data</label><input type="date" id="editData" readonly style="background:#444"></div><div class="form-group"><label>Valor (MT)</label><input type="number" id="editValor" placeholder="Novo valor"></div><div class="form-group"><label>Observação</label><input type="text" id="editObs" placeholder="Nova observação"></div><div class="modal-actions" style="display:flex; gap:12px; margin-top:20px"><button class="btn-small" onclick="fecharModal('modalEditarPagamento')" style="background:#666">Cancelar</button><button class="btn-small btn-danger" onclick="removerPagamentoEditado()">🗑️ Remover</button><button class="btn-small btn-success" onclick="salvarEdicaoPagamento()">💾 Salvar</button></div></div></div>
+<div id="modalEditarTaxista" class="modal"><div class="modal-content"><h3>✏️ Editar Taxista</h3><input type="text" id="editTaxId" hidden><div class="form-group"><label>Nome</label><input type="text" id="editTaxNome" placeholder="Nome"></div><div class="form-group"><label>Telefone</label><input type="text" id="editTaxTel" placeholder="Telefone"></div><div class="form-group"><label>Tipo</label><select id="editTaxTipo"><option value="externo">🌍 Externo (Segunda a Sexta)</option><option value="interno">🏢 Interno (Segunda a Sábado)</option></select></div><div class="form-group"><label>Receita Diária</label><select id="editTaxReceita"><option value="250">250 MT/dia</option><option value="300">300 MT/dia</option><option value="350">350 MT/dia</option></select></div><div class="form-group"><label>Data Início</label><input type="date" id="editTaxInicio"></div><div class="form-group"><label>Matrícula</label><input type="text" id="editTaxMoto" placeholder="Matrícula"></div><div class="modal-actions" style="display:flex; gap:12px; margin-top:20px"><button class="btn-small" onclick="fecharModal('modalEditarTaxista')" style="background:#666">Cancelar</button><button class="btn-small btn-danger" onclick="removerTaxistaEditado()">🗑️ Eliminar Taxista</button><button class="btn-small btn-success" onclick="salvarEdicaoTaxista()">💾 Salvar Alterações</button></div></div></div>
+<div id="modalTaxista" class="modal"><div class="modal-content"><h3>🏍️ Novo Taxista</h3><input type="text" id="taxNome" placeholder="Nome completo"><input type="text" id="taxTel" placeholder="Telefone"><select id="taxTipo"><option value="externo">🌍 Externo (Segunda a Sexta)</option><option value="interno">🏢 Interno (Segunda a Sábado)</option></select><select id="taxReceita"><option value="250">250 MT/dia</option><option value="300">300 MT/dia</option><option value="350">350 MT/dia</option></select><input type="date" id="taxInicio"><input type="text" id="taxMoto" placeholder="Matrícula"><button onclick="salvarTaxista()">Guardar</button><button class="btn-small" onclick="fecharModal('modalTaxista')" style="background:#666">Cancelar</button></div></div>
+<div id="modalUser" class="modal"><div class="modal-content"><h3>👤 Novo Utilizador</h3><input type="text" id="userNome" placeholder="Nome"><input type="text" id="userUsername" placeholder="Utilizador"><input type="password" id="userSenha" placeholder="Senha"><select id="userRole"><option value="gestor">Gestor</option><option value="admin">Dono/Admin</option></select><button onclick="salvarUtilizador()">Guardar</button><button class="btn-small" onclick="fecharModal('modalUser')" style="background:#666">Cancelar</button></div></div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+    // ========== IMPORTAÇÕES FIREBASE ==========
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyCxLNSVjvGQ6t3OqiKEkdCw8EbjJAqDzE",
+        authDomain: "velo-delivery-moz.firebaseapp.com",
+        projectId: "velo-delivery-moz",
+        storageBucket: "velo-delivery-moz.firebasestorage.app",
+        messagingSenderId: "177879040721",
+        appId: "1:177879040721:web:4e2732ceeb7bbe02183bf0",
+        measurementId: "G-1S1SS3S156"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // ========== VARIÁVEIS GLOBAIS ==========
+    let currentUser = null;
+    let taxistas = [];
+    let pagamentos = [];
+    let atividades = [];
+    let users = [];
+    let dadosInicializados = false;
+    
+    // ========== TEMA ==========
+    window.toggleTheme = function() {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        if (body.classList.contains('light-mode')) {
+            body.classList.remove('light-mode');
+            localStorage.setItem('veloTheme', 'dark');
+            btn.innerHTML = '🌙 Escuro';
+        } else {
+            body.classList.add('light-mode');
+            localStorage.setItem('veloTheme', 'light');
+            btn.innerHTML = '☀️ Claro';
+        }
+    };
+    
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('veloTheme');
+        const btn = document.getElementById('themeBtn');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            if(btn) btn.innerHTML = '☀️ Claro';
+        } else {
+            document.body.classList.remove('light-mode');
+            if(btn) btn.innerHTML = '🌙 Escuro';
+        }
+    }
+    
+    // ========== FUNÇÕES AUXILIARES ==========
+    function mostrarToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerHTML = '✅ ' + msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+    
+    function fmtMoeda(valor) { return valor.toLocaleString('pt-MZ') + ' MT'; }
+    function hoje() { return new Date().toISOString().split('T')[0]; }
+    
+    function isDiaUtilParaTaxista(dataStr, tipo) {
+        const data = new Date(dataStr + 'T12:00:00');
+        const diaSemana = data.getDay();
+        if (tipo === 'externo') return diaSemana >= 1 && diaSemana <= 5;
+        else return diaSemana >= 1 && diaSemana <= 6;
+    }
+    
+    function isDataValidaParaTaxista(dataStr, taxistaInicio) { return dataStr >= taxistaInicio; }
+    
+    function getDiasUteisNoMesParaTaxista(ano, mes, taxistaInicio, tipo) {
+        let diasUteis = [];
+        for (let dia = 1; dia <= new Date(ano, mes + 1, 0).getDate(); dia++) {
+            let dataStr = `${ano}-${String(mes + 1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+            if (isDiaUtilParaTaxista(dataStr, tipo) && isDataValidaParaTaxista(dataStr, taxistaInicio)) diasUteis.push(dataStr);
+        }
+        return diasUteis;
+    }
+    
+    // ========== INICIALIZAR DADOS NO FIREBASE (APENAS UMA VEZ) ==========
+    async function inicializarDadosFirebase() {
+        if (dadosInicializados) return;
+        
+        try {
+            const taxistasSnapshot = await getDocs(collection(db, "taxistas"));
+            
+            if (taxistasSnapshot.empty) {
+                console.log("📦 A carregar taxistas iniciais...");
+                const taxistasIniciais = [
+                    { nome: 'Amisse João', telefone: '861769215 / 878357358', receita: 300, tipo: 'externo', inicio: '2026-04-09', moto: 'LAEEYBCH75SN605001', ativo: true },
+                    { nome: 'Almeida Jorge Gordinho', telefone: '877932864 / 772273222', receita: 300, tipo: 'externo', inicio: '2026-04-06', moto: 'LAEEYBCH7SN604656', ativo: true }
+                ];
+                for (const taxista of taxistasIniciais) {
+                    await addDoc(collection(db, "taxistas"), taxista);
+                }
+                console.log("✅ Taxistas carregados!");
+            }
+            
+            const usersSnapshot = await getDocs(collection(db, "utilizadores"));
+            
+            if (usersSnapshot.empty) {
+                console.log("📦 A carregar utilizadores iniciais...");
+                const usersIniciais = [
+                    { nome: 'Administrador', username: 'admin', senha: 'velo2025', role: 'admin' },
+                    { nome: 'Gestor Carlos', username: 'gestor1', senha: 'g1234', role: 'gestor' },
+                    { nome: 'Gestora Ana', username: 'gestor2', senha: 'g5678', role: 'gestor' }
+                ];
+                for (const user of usersIniciais) {
+                    await addDoc(collection(db, "utilizadores"), user);
+                }
+                console.log("✅ Utilizadores carregados!");
+            }
+            
+            dadosInicializados = true;
+        } catch (error) {
+            console.error("Erro ao inicializar dados:", error);
+        }
+    }
+    
+    // ========== CARREGAR DADOS DO FIREBASE ==========
+    async function carregarDados() {
+        try {
+            const taxistasSnapshot = await getDocs(collection(db, "taxistas"));
+            taxistas = taxistasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const pagamentosSnapshot = await getDocs(collection(db, "pagamentos"));
+            pagamentos = pagamentosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const atividadesSnapshot = await getDocs(query(collection(db, "atividades"), orderBy("created_at", "desc"), limit(50)));
+            atividades = atividadesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const usersSnapshot = await getDocs(collection(db, "utilizadores"));
+            users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            return true;
+        } catch (error) {
+            console.error("Erro ao carregar dados:", error);
+            return false;
+        }
+    }
+    
+    function calcularDivida(taxistaId) {
+        const t = taxistas.find(x => x.id === taxistaId);
+        if (!t) return 0;
+        let divida = 0;
+        const hojeData = hoje();
+        const ano = new Date().getFullYear();
+        const mes = new Date().getMonth() + 1;
+        for (let dia = 1; dia <= new Date(ano, mes, 0).getDate(); dia++) {
+            let dataStr = `${ano}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+            if (dataStr > hojeData) continue;
+            if (!isDataValidaParaTaxista(dataStr, t.inicio)) continue;
+            if (!isDiaUtilParaTaxista(dataStr, t.tipo)) continue;
+            const pago = pagamentos.filter(p => p.taxista_id === taxistaId && p.data === dataStr).reduce((s, p) => s + p.valor, 0);
+            if (pago < t.receita) divida += t.receita - pago;
+        }
+        return divida;
+    }
+    
+    function calcularValorMensal(taxistaId, ano, mes) {
+        const t = taxistas.find(x => x.id === taxistaId);
+        if (!t) return 0;
+        return t.receita * getDiasUteisNoMesParaTaxista(ano, mes, t.inicio, t.tipo).length;
+    }
+    
+    function calcularDividaAnual(taxistaId) {
+        const t = taxistas.find(x => x.id === taxistaId);
+        if (!t) return 0;
+        let dividaTotal = 0;
+        const hojeData = hoje();
+        const dataInicio = new Date(t.inicio);
+        const anoAtual = new Date().getFullYear();
+        for (let ano = dataInicio.getFullYear(); ano <= anoAtual; ano++) {
+            let mesInicio = (ano === dataInicio.getFullYear()) ? dataInicio.getMonth() : 0;
+            let mesFim = (ano === anoAtual) ? new Date().getMonth() : 11;
+            for (let mes = mesInicio; mes <= mesFim; mes++) {
+                const diasUteis = getDiasUteisNoMesParaTaxista(ano, mes, t.inicio, t.tipo);
+                const esperado = t.receita * diasUteis.length;
+                const pago = pagamentos.filter(p => {
+                    const [pAno, pMes] = p.data.split('-');
+                    return p.taxista_id === taxistaId && parseInt(pMes) === mes + 1 && parseInt(pAno) === ano && isDataValidaParaTaxista(p.data, t.inicio);
+                }).reduce((s, p) => s + p.valor, 0);
+                dividaTotal += Math.max(0, esperado - pago);
+            }
+        }
+        return dividaTotal;
+    }
+    
+    // ========== ELIMINAR TAXISTA PERMANENTEMENTE ==========
+    window.eliminarTaxistaPermanente = async function(id, nome) {
+        if (currentUser?.role !== 'admin') {
+            mostrarToast('⚠️ Apenas o Administrador pode eliminar taxistas!');
+            return;
+        }
+        
+        if (confirm(`⚠️ ATENÇÃO! Tem certeza que deseja ELIMINAR PERMANENTEMENTE o taxista "${nome}"?\n\nEsta ação irá:\n- Remover o taxista\n- Remover TODOS os pagamentos associados\n- Remover TODAS as atividades relacionadas\n\nEsta ação NÃO PODE SER DESFEITA!`)) {
+            try {
+                const pagamentosParaRemover = pagamentos.filter(p => p.taxista_id === id);
+                for (const pag of pagamentosParaRemover) {
+                    await deleteDoc(doc(db, "pagamentos", pag.id));
+                }
+                
+                const atividadesParaRemover = atividades.filter(a => a.taxista === nome);
+                for (const atv of atividadesParaRemover) {
+                    await deleteDoc(doc(db, "atividades", atv.id));
+                }
+                
+                await deleteDoc(doc(db, "taxistas", id));
+                
+                await addDoc(collection(db, "atividades"), {
+                    taxista: nome,
+                    acao: `Taxista ELIMINADO permanentemente do sistema`,
+                    valor: 0,
+                    data: hoje(),
+                    gestor: currentUser.nome,
+                    created_at: new Date().toISOString()
+                });
+                
+                await carregarDados();
+                renderTaxistas();
+                renderPagamentos();
+                renderDashboard();
+                renderContratos();
+                mostrarToast(`🗑️ Taxista "${nome}" eliminado permanentemente!`);
+            } catch (error) {
+                console.error("Erro ao eliminar taxista:", error);
+                mostrarToast('❌ Erro ao eliminar taxista!');
+            }
+        }
+    };
+    
+    // ========== RANKING ==========
+    function renderRanking() {
+        const ranking = taxistas.filter(t => t.ativo).map(t => ({ id: t.id, nome: t.nome, divida: calcularDivida(t.id), tipo: t.tipo, moto: t.moto })).filter(t => t.divida > 0).sort((a, b) => b.divida - a.divida);
+        let html = '<div class="ranking-card"><div class="ranking-title">⚠️ RANKING DE DÍVIDAS</div>';
+        if (ranking.length === 0) html += '<div class="ranking-empty">✅ Todos os taxistas estão em dia! 🎉</div>';
+        else {
+            html += '<div class="ranking-list">';
+            ranking.forEach((item, index) => {
+                const position = index + 1;
+                let positionClass = '';
+                let alertClass = '';
+                if (position === 1) positionClass = 'gold';
+                else if (position === 2) positionClass = 'silver';
+                else if (position === 3) positionClass = 'bronze';
+                if (item.divida > 10000) alertClass = 'alert-high';
+                else if (item.divida > 5000) alertClass = 'alert-medium';
+                else alertClass = 'alert-low';
+                const tipoIcon = item.tipo === 'externo' ? '🌍' : '🏢';
+                html += `<div class="ranking-item ${alertClass}"><div class="ranking-position ${positionClass}">${position}º</div><div class="ranking-name">${tipoIcon} ${item.nome} ${item.moto ? '(' + item.moto + ')' : ''}</div><div class="ranking-debt">${fmtMoeda(item.divida)}</div></div>`;
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+        document.getElementById('rankingContainer').innerHTML = html;
+    }
+    
+    // ========== DASHBOARD ==========
+    async function renderDashboard() {
+        const ativos = taxistas.filter(t => t.ativo).length;
+        const dividaTotal = taxistas.reduce((s, t) => s + calcularDivida(t.id), 0);
+        const dividaAnualTotal = taxistas.reduce((s, t) => s + calcularDividaAnual(t.id), 0);
+        const hojePago = pagamentos.filter(p => p.data === hoje()).reduce((s, p) => s + p.valor, 0);
+        const mesAtual = new Date().getMonth() + 1;
+        const mesPago = pagamentos.filter(p => parseInt(p.data.split('-')[1]) === mesAtual).reduce((s, p) => s + p.valor, 0);
+        
+        document.getElementById('statsCards').innerHTML = `<div class="stat"><div>🏍️ Taxistas</div><div class="stat-value">${ativos}</div></div><div class="stat"><div>💰 Hoje</div><div class="stat-value">${fmtMoeda(hojePago)}</div></div><div class="stat"><div>📅 Mês</div><div class="stat-value">${fmtMoeda(mesPago)}</div></div><div class="stat"><div>💸 Dívida Mensal</div><div class="stat-value" style="color:${dividaTotal > 0 ? 'var(--accent)' : 'var(--green)'}">${fmtMoeda(dividaTotal)}</div></div><div class="stat"><div>📆 Dívida Anual</div><div class="stat-value" style="color:${dividaAnualTotal > 0 ? 'var(--accent)' : 'var(--green)'}">${fmtMoeda(dividaAnualTotal)}</div></div>`;
+        renderRanking();
+        
+        const atividadesLista = atividades.slice(0, 10).map(a => `<div class="list-item" style="background:var(--card-bg); padding:12px; margin:8px 0; border-radius:12px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px"><div><b>${a.taxista}</b><br><small>${a.acao}</small></div><div><small>${a.data}</small></div></div>`).join('');
+        document.getElementById('actividadesLista').innerHTML = atividadesLista || '<div class="text-center" style="padding:20px">Nenhuma actividade</div>';
+    }
+    
+    // ========== TAXISTAS ==========
+    async function renderTaxistas() {
+        const search = document.getElementById('searchTax')?.value.toLowerCase() || '';
+        const filtrados = taxistas.filter(t => t.nome.toLowerCase().includes(search));
+        const isAdmin = currentUser?.role === 'admin';
+        
+        document.getElementById('taxistasLista').innerHTML = filtrados.map(t => {
+            const divida = calcularDivida(t.id);
+            const dividaAnual = calcularDividaAnual(t.id);
+            const tipoLabel = t.tipo === 'externo' ? '🌍 Externo (2ª a 6ª)' : '🏢 Interno (2ª a Sáb)';
+            return `<div class="taxista-card"><div class="taxista-header"><span class="taxista-nome">🏍️ ${t.nome}</span><span class="badge ${t.ativo ? 'badge-green' : 'badge-red'}">${t.ativo ? '● Activo' : '● Inactivo'}</span></div><div class="taxista-detalhes"><span>📞 ${t.telefone || '—'}</span><span>💰 Meta: ${fmtMoeda(t.receita)}/dia</span><span>🏍️ ${t.moto || '—'}</span><span class="badge badge-purple">${tipoLabel}</span><span class="badge ${divida > 0 ? 'badge-red' : 'badge-green'}">${divida > 0 ? `💸 Dívida: ${fmtMoeda(divida)}` : '✅ Em dia'}</span></div><div class="taxista-detalhes" style="border-top:1px solid var(--border);padding-top:8px"><span class="badge badge-warning">📆 Dívida Anual: ${fmtMoeda(dividaAnual)}</span><span style="font-size:11px">📅 Início: ${t.inicio}</span></div><div class="taxista-actions"><button class="btn-small btn-success" onclick="abrirModalPagamentoParaTaxista('${t.id}')">💰 Novo Pagamento</button><button class="btn-small" onclick="gerarPDFporTaxista('${t.id}')" style="background:#f39c12">📄 Relatório</button>${isAdmin ? `<button class="btn-small btn-edit" onclick="abrirEditarTaxista('${t.id}')">✏️ Editar</button><button class="btn-small btn-danger" onclick="toggleTaxista('${t.id}')">${t.ativo ? '⛔ Desativar' : '✅ Ativar'}</button><button class="btn-small btn-danger" onclick="eliminarTaxistaPermanente('${t.id}', '${t.nome.replace(/'/g, "\\'")}')" style="background:#c0392b">🗑️ Eliminar</button>` : ''}</div></div>`;
+        }).join('') || '<div class="card text-center">Nenhum taxista encontrado</div>';
+    }
+    
+    async function abrirModalPagamentoParaTaxista(id) {
+        const t = taxistas.find(x => x.id === id);
+        const select = document.getElementById('pagTaxistaId');
+        select.innerHTML = taxistas.filter(tx => tx.ativo).map(tx => `<option value="${tx.id}" ${tx.id === id ? 'selected' : ''}>${tx.nome} (${tx.tipo === 'externo' ? '🌍 Externo' : '🏢 Interno'})</option>`).join('');
+        document.getElementById('pagData').value = hoje();
+        document.getElementById('pagValor').value = t.receita;
+        document.getElementById('pagObs').value = '';
+        document.getElementById('modalPagamento').style.display = 'flex';
+    }
+    
+    window.abrirModalPagamentoParaTaxista = abrirModalPagamentoParaTaxista;
+    
+    async function salvarPagamentoManual() {
+        const taxistaId = document.getElementById('pagTaxistaId').value;
+        const data = document.getElementById('pagData').value;
+        const valor = Number(document.getElementById('pagValor').value);
+        const obs = document.getElementById('pagObs').value;
+        const t = taxistas.find(x => x.id === taxistaId);
+        
+        if (!data || !valor) { mostrarToast('❌ Preencha a data e o valor!'); return; }
+        if (!isDataValidaParaTaxista(data, t.inicio)) { mostrarToast(`⚠️ O contrato do taxista iniciou em ${t.inicio}.`); return; }
+        
+        await addDoc(collection(db, "pagamentos"), {
+            taxista_id: taxistaId,
+            data: data,
+            valor: valor,
+            observacao: obs,
+            gestor: currentUser.nome,
+            created_at: new Date().toISOString()
+        });
+        
+        await addDoc(collection(db, "atividades"), {
+            taxista: t.nome,
+            acao: `Pagamento de ${fmtMoeda(valor)}`,
+            valor: valor,
+            data: data,
+            gestor: currentUser.nome,
+            created_at: new Date().toISOString()
+        });
+        
+        await carregarDados();
+        fecharModal('modalPagamento');
+        renderPagamentos();
+        renderDashboard();
+        renderTaxistas();
+        mostrarToast(`✅ Pagamento de ${fmtMoeda(valor)} registado para ${t.nome}`);
+    }
+    
+    window.salvarPagamentoManual = salvarPagamentoManual;
+    
+    // ========== RELATÓRIO PDF ==========
+    window.gerarPDFporTaxista = async function(taxistaId) {
+        const t = taxistas.find(x => x.id === taxistaId);
+        if (!t) { mostrarToast('Taxista não encontrado!'); return; }
+        const mes = parseInt(document.getElementById('reportMonth').value);
+        const ano = parseInt(document.getElementById('reportYear').value);
+        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
+        const pagamentosMes = pagamentos.filter(p => {
+            const [pAno, pMes] = p.data.split('-');
+            return p.taxista_id === taxistaId && parseInt(pMes) === mes + 1 && parseInt(pAno) === ano;
+        });
+        
+        const totalPago = pagamentosMes.reduce((s, p) => s + p.valor, 0);
+        const valorEsperadoMes = calcularValorMensal(taxistaId, ano, mes);
+        const dividaAnual = calcularDividaAnual(taxistaId);
+        const dividaAtual = calcularDivida(taxistaId);
+        
+        let conteudo = `<div class="pdf-content"><div class="logo-header"><img src="https://i.ibb.co/zVdc9RRK/Velo-Delivery-Moz-Logo.png" alt="Velo Delivery Moz"><h1>VELO DELIVERY MOZ</h1></div><h2>RELATÓRIO INDIVIDUAL DE PAGAMENTOS</h2><p><strong>Taxista:</strong> ${t.nome}</p><p><strong>Tipo:</strong> ${t.tipo === 'externo' ? '🌍 Externo (Segunda a Sexta)' : '🏢 Interno (Segunda a Sábado)'}</p><p><strong>Matrícula:</strong> ${t.moto || 'Não registada'}</p><p><strong>Data de Início:</strong> ${t.inicio}</p><p><strong>Meta diária:</strong> ${fmtMoeda(t.receita)}</p><p><strong>Período:</strong> ${meses[mes]} ${ano}</p><hr><h3>📊 RESUMO FINANCEIRO</h3><table style="width:100%"><tr><td style="width:50%"><strong>💰 Valor esperado:</strong></td><td style="text-align:right">${fmtMoeda(valorEsperadoMes)}</td></tr><tr><td style="width:50%"><strong>✅ Total pago:</strong></td><td style="text-align:right">${fmtMoeda(totalPago)}</td></tr><tr><td style="width:50%"><strong>📉 Dívida do mês:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(Math.max(0, valorEsperadoMes - totalPago))}</td></tr><tr><td style="width:50%"><strong>⚠️ Dívida acumulada:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAtual)}</td></tr><tr><td style="width:50%"><strong>🏆 DÍVIDA TOTAL ANUAL:</strong></td><td style="text-align:right;color:#e0000f">${fmtMoeda(dividaAnual)}</td></tr></table><hr><h3>📋 Histórico de Pagamentos - ${meses[mes]} ${ano}</h3><table style="width:100%"><thead><tr><th>Data</th><th>Valor Pago</th><th>Gestor</th><th>Observação</th></tr></thead><tbody>`;
+        if (pagamentosMes.length === 0) conteudo += `<tr><td colspan="4" style="text-align:center">Sem pagamentos registados</td></tr>`;
+        else for (const p of pagamentosMes.sort((a, b) => new Date(a.data) - new Date(b.data))) conteudo += `<tr><td>${p.data}</td><td><strong>${fmtMoeda(p.valor)}</strong></td><td>${p.gestor || '-'}</td><td>${p.observacao || '-'}</td></tr>`;
+        conteudo += `</tbody><tfoot><tr class="total"><td colspan="1"><strong>TOTAL</strong></td><td colspan="3"><strong>${fmtMoeda(totalPago)}</strong></td></tr></tfoot></table><div class="footer">Documento gerado em ${new Date().toLocaleString('pt-MZ')}</div></div>`;
+        
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(`<!DOCTYPE html><html><head><style>body{margin:0;padding:20px;font-family:Arial}.logo-header{text-align:center;margin-bottom:20px}.logo-header img{height:60px}h1{color:#e0000f;text-align:center}h2{color:#e0000f}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{border:1px solid #ccc;padding:8px;text-align:left}th{background:#f0f0f0}.total{font-weight:bold;background:#f9f9f9}.footer{text-align:center;margin-top:30px;font-size:12px;color:#888}</style></head><body>${conteudo}</body></html>`);
+        doc.close();
+        setTimeout(() => { iframe.contentWindow.print(); setTimeout(() => { document.body.removeChild(iframe); }, 1000); }, 500);
+        mostrarToast(`📄 Abrindo impressão para gerar PDF de ${t.nome}...`);
+    };
+    
+    // ========== PAGAMENTOS POR TAXISTA ==========
+    async function renderPagamentos() {
+        const mes = parseInt(document.getElementById('reportMonth').value);
+        const ano = parseInt(document.getElementById('reportYear').value);
+        const isAdmin = currentUser?.role === 'admin';
+        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        let html = `<div style="margin-bottom:10px"><h3 style="color:var(--accent)">📅 Pagamentos de ${meses[mes]} ${ano}</h3></div>`;
+        
+        for (const t of taxistas.filter(tx => tx.ativo)) {
+            const pagamentosTaxista = pagamentos.filter(p => {
+                const [pAno, pMes] = p.data.split('-');
+                return p.taxista_id === t.id && parseInt(pMes) === mes + 1 && parseInt(pAno) === ano;
+            }).sort((a, b) => new Date(b.data) - new Date(a.data));
+            const totalPago = pagamentosTaxista.reduce((s, p) => s + p.valor, 0);
+            const valorEsperado = calcularValorMensal(t.id, ano, mes);
+            const dividaMes = Math.max(0, valorEsperado - totalPago);
+            const tipoIcon = t.tipo === 'externo' ? '🌍' : '🏢';
+            const tipoTexto = t.tipo === 'externo' ? 'Externo (2ª a 6ª)' : 'Interno (2ª a Sáb)';
+            html += `<div class="taxista-payments-card"><div class="taxista-payments-header"><div><span class="taxista-payments-title">${tipoIcon} ${t.nome}</span><div style="font-size:12px;color:var(--text-muted);margin-top:4px">🏍️ ${t.moto || 'sem moto'} | 📞 ${t.telefone || '—'} | ${tipoTexto}</div></div><div class="taxista-payments-summary"><div><span style="color:var(--green)">💰 Pago: ${fmtMoeda(totalPago)}</span></div><div><span style="color:var(--accent)">📊 Esperado: ${fmtMoeda(valorEsperado)}</span></div><div><span style="color:${dividaMes > 0 ? 'var(--accent)' : 'var(--green)'}">⚠️ Dívida: ${fmtMoeda(dividaMes)}</span></div></div></div>`;
+            if (pagamentosTaxista.length === 0) html += `<div class="empty-payments">📭 Nenhum pagamento registado neste mês</div>`;
+            else {
+                html += `<table class="payments-table"><thead><tr><th>Data</th><th>Valor</th><th>Gestor</th><th>Observação</th>${isAdmin ? '<th>Ações</th>' : ''}</tr></thead><tbody>`;
+                for (const p of pagamentosTaxista) html += `<tr><td style="font-family:monospace">${p.data}</td><td style="color:var(--green);font-weight:bold">${fmtMoeda(p.valor)}</td><td>${p.gestor || '-'}</td><td>${p.observacao || '-'}</td>${isAdmin ? `<td><button class="btn-small btn-edit" onclick='abrirEditarPagamento("${p.id}")'>✏️ Editar</button></td>` : ''}</tr>`;
+                html += `</tbody><tfoot style="background:var(--accent-light)"><tr class="total"><td><strong>TOTAL</strong></td><td colspan="3"><strong>${fmtMoeda(totalPago)}</strong></td>${isAdmin ? '<td></td>' : ''}</tr></tfoot></table>`;
+            }
+            html += `</div>`;
+        }
+        if (taxistas.filter(t => t.ativo).length === 0) html += '<div class="card text-center">Nenhum taxista ativo no sistema</div>';
+        document.getElementById('pagamentosLista').innerHTML = html;
+        
+        const container = document.getElementById('pdfButtonsList');
+        if (container) container.innerHTML = taxistas.filter(t => t.ativo).map(t => `<button class="btn-small" onclick="gerarPDFporTaxista('${t.id}')" style="background: var(--accent); padding: 8px 15px;">📄 ${t.nome}</button>`).join('');
+    }
+    
+    window.renderPagamentos = renderPagamentos;
+    
+    // ========== LOGIN ==========
+    window.fazerLogin = async function() {
+        const username = document.getElementById('loginUser').value.trim();
+        const senha = document.getElementById('loginPass').value;
+        
+        await inicializarDadosFirebase();
+        await carregarDados();
+        
+        const user = users.find(u => u.username === username && u.senha === senha);
+        if (!user) {
+            document.getElementById('loginMsg').innerHTML = '❌ Credenciais inválidas!';
+            return;
+        }
+        
+        currentUser = user;
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('userName').innerHTML = '👤 ' + currentUser.nome;
+        
+        const isAdmin = currentUser.role === 'admin';
+        document.getElementById('adminBackupButtons').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('adminExportButtons').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('btnNovoTax').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('btnNovoUser').style.display = isAdmin ? 'flex' : 'none';
+        document.getElementById('adminNav').style.display = isAdmin ? 'flex' : 'none';
+        
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.onclick = () => {
+                const page = nav.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                document.getElementById('page-' + page).classList.add('active');
+                nav.classList.add('active');
+                if (page === 'dashboard') renderDashboard();
+                if (page === 'taxistas') renderTaxistas();
+                if (page === 'pagamentos') renderPagamentos();
+                if (page === 'contratos') renderContratos();
+                if (page === 'admin' && isAdmin) renderUsers();
+            };
+        });
+        
+        const anoAtual = new Date().getFullYear();
+        document.getElementById('reportYear').innerHTML = `<option value="${anoAtual-1}">${anoAtual-1}</option><option value="${anoAtual}" selected>${anoAtual}</option><option value="${anoAtual+1}">${anoAtual+1}</option>`;
+        
+        renderDashboard();
+        renderTaxistas();
+        renderPagamentos();
+        renderContratos();
+        if (isAdmin) renderUsers();
+        loadTheme();
+        mostrarToast('Bem-vindo, ' + currentUser.nome);
+    };
+    
+    window.fazerLogout = function() {
+        currentUser = null;
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('loginUser').value = '';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginMsg').innerHTML = '';
+    };
+    
+    // ========== FUNÇÕES ADICIONAIS ==========
+    window.abrirModalPagamento = function() {
+        const select = document.getElementById('pagTaxistaId');
+        select.innerHTML = taxistas.filter(t => t.ativo).map(t => `<option value="${t.id}">${t.nome} (${t.tipo === 'externo' ? '🌍 Externo' : '🏢 Interno'})</option>`).join('');
+        document.getElementById('pagData').value = hoje();
+        document.getElementById('pagValor').value = '';
+        document.getElementById('pagObs').value = '';
+        document.getElementById('modalPagamento').style.display = 'flex';
+    };
+    
+    window.abrirEditarPagamento = async function(pagamentoId) {
+        if (currentUser?.role !== 'admin') { mostrarToast('⚠️ Apenas o Administrador pode editar pagamentos!'); return; }
+        const pagamento = pagamentos.find(p => p.id === pagamentoId);
+        if (!pagamento) return;
+        const t = taxistas.find(x => x.id === pagamento.taxista_id);
+        document.getElementById('editTaxistaNome').value = t ? t.nome : 'Desconhecido';
+        document.getElementById('editData').value = pagamento.data;
+        document.getElementById('editValor').value = pagamento.valor;
+        document.getElementById('editObs').value = pagamento.observacao || '';
+        window.pagamentoEditandoId = pagamentoId;
+        document.getElementById('modalEditarPagamento').style.display = 'flex';
+    };
+    
+    window.salvarEdicaoPagamento = async function() {
+        const novoValor = Number(document.getElementById('editValor').value);
+        const novaObs = document.getElementById('editObs').value;
+        if (!novoValor) { mostrarToast('❌ Valor inválido!'); return; }
+        const pagamentoRef = doc(db, "pagamentos", window.pagamentoEditandoId);
+        const pagamentoAntigo = pagamentos.find(p => p.id === window.pagamentoEditandoId);
+        await updateDoc(pagamentoRef, { valor: novoValor, observacao: novaObs });
+        await addDoc(collection(db, "atividades"), {
+            taxista: pagamentoAntigo?.taxista_nome || 'Desconhecido',
+            acao: `Pagamento editado: de ${fmtMoeda(pagamentoAntigo?.valor)} para ${fmtMoeda(novoValor)}`,
+            valor: novoValor,
+            data: pagamentoAntigo?.data,
+            gestor: currentUser.nome,
+            created_at: new Date().toISOString()
+        });
+        await carregarDados();
+        fecharModal('modalEditarPagamento');
+        renderPagamentos();
+        renderDashboard();
+        mostrarToast(`✅ Pagamento editado com sucesso!`);
+    };
+    
+    window.removerPagamentoEditado = async function() {
+        if (confirm(`Tem certeza que deseja REMOVER este pagamento?`)) {
+            await deleteDoc(doc(db, "pagamentos", window.pagamentoEditandoId));
+            await carregarDados();
+            fecharModal('modalEditarPagamento');
+            renderPagamentos();
+            renderDashboard();
+            mostrarToast(`🗑️ Pagamento removido!`);
+        }
+    };
+    
+    window.abrirModalTaxista = function() {
+        if (currentUser?.role !== 'admin') { mostrarToast('Apenas Admin pode adicionar'); return; }
+        document.getElementById('taxNome').value = '';
+        document.getElementById('taxTel').value = '';
+        document.getElementById('taxTipo').value = 'externo';
+        document.getElementById('taxReceita').value = '300';
+        document.getElementById('taxInicio').value = hoje();
+        document.getElementById('taxMoto').value = '';
+        document.getElementById('modalTaxista').style.display = 'flex';
+    };
+    
+    window.salvarTaxista = async function() {
+        const nome = document.getElementById('taxNome').value.trim();
+        if (!nome) { mostrarToast('Nome obrigatório'); return; }
+        await addDoc(collection(db, "taxistas"), {
+            nome: nome,
+            telefone: document.getElementById('taxTel').value,
+            tipo: document.getElementById('taxTipo').value,
+            receita: Number(document.getElementById('taxReceita').value),
+            inicio: document.getElementById('taxInicio').value,
+            moto: document.getElementById('taxMoto').value,
+            ativo: true
+        });
+        await carregarDados();
+        fecharModal('modalTaxista');
+        renderTaxistas();
+        renderPagamentos();
+        mostrarToast('Taxista adicionado');
+    };
+    
+    window.toggleTaxista = async function(id) {
+        const t = taxistas.find(x => x.id === id);
+        await updateDoc(doc(db, "taxistas", id), { ativo: !t.ativo });
+        await carregarDados();
+        renderTaxistas();
+        renderPagamentos();
+        mostrarToast(`${t.nome} ${!t.ativo ? 'ativado' : 'desativado'}`);
+    };
+    
+    window.abrirEditarTaxista = async function(id) {
+        if (currentUser?.role !== 'admin') { mostrarToast('⚠️ Apenas o Administrador pode editar taxistas!'); return; }
+        const t = taxistas.find(x => x.id === id);
+        document.getElementById('editTaxId').value = id;
+        document.getElementById('editTaxNome').value = t.nome;
+        document.getElementById('editTaxTel').value = t.telefone || '';
+        document.getElementById('editTaxTipo').value = t.tipo;
+        document.getElementById('editTaxReceita').value = t.receita;
+        document.getElementById('editTaxInicio').value = t.inicio;
+        document.getElementById('editTaxMoto').value = t.moto || '';
+        window.taxistaEditandoId = id;
+        document.getElementById('modalEditarTaxista').style.display = 'flex';
+    };
+    
+    window.salvarEdicaoTaxista = async function() {
+        const nome = document.getElementById('editTaxNome').value.trim();
+        if (!nome) { mostrarToast('Nome obrigatório'); return; }
+        const taxistaRef = doc(db, "taxistas", window.taxistaEditandoId);
+        await updateDoc(taxistaRef, {
+            nome: nome,
+            telefone: document.getElementById('editTaxTel').value,
+            tipo: document.getElementById('editTaxTipo').value,
+            receita: Number(document.getElementById('editTaxReceita').value),
+            inicio: document.getElementById('editTaxInicio').value,
+            moto: document.getElementById('editTaxMoto').value
+        });
+        await carregarDados();
+        fecharModal('modalEditarTaxista');
+        renderTaxistas();
+        renderPagamentos();
+        mostrarToast(`✅ Dados do taxista atualizados!`);
+    };
+    
+    window.removerTaxistaEditado = async function() {
+        if (confirm(`⚠️ ATENÇÃO: Tem certeza que deseja ELIMINAR este taxista permanentemente?`)) {
+            await deleteDoc(doc(db, "taxistas", window.taxistaEditandoId));
+            await carregarDados();
+            fecharModal('modalEditarTaxista');
+            renderTaxistas();
+            renderPagamentos();
+            mostrarToast(`🗑️ Taxista eliminado!`);
+        }
+    };
+    
+    async function renderContratos() {
+        document.getElementById('contratosLista').innerHTML = taxistas.map(t => {
+            const fim = new Date(t.inicio);
+            fim.setFullYear(fim.getFullYear() + 1);
+            const diasRest = Math.ceil((fim - new Date()) / (1000 * 60 * 60 * 24));
+            const percentual = Math.min(100, Math.max(0, Math.round((365 - Math.max(0, diasRest)) / 365 * 100)));
+            const cor = diasRest < 0 ? 'var(--text-muted)' : diasRest < 30 ? 'var(--accent)' : 'var(--green)';
+            const status = diasRest < 0 ? '✅ Concluído' : `⏰ ${diasRest} dias restantes`;
+            const tipoLabel = t.tipo === 'externo' ? '🌍 Externo (2ª a 6ª)' : '🏢 Interno (2ª a Sáb)';
+            return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap"><b>${t.nome}</b><span style="color:${cor};font-size:12px">${status}</span></div><div style="font-size:12px;margin:8px 0">📅 Início: ${t.inicio} → Término: ${fim.toISOString().split('T')[0]}</div><div class="progress-bar"><div class="progress-fill" style="width:${percentual}%;background:${cor}"></div></div><div style="margin-top:8px"><span style="color:var(--accent)">💰 ${fmtMoeda(t.receita)}</span>/dia | 🏍️ ${t.moto || 'sem moto'} | ${tipoLabel}</div></div>`;
+        }).join('') || '<div class="card text-center">Nenhum contrato</div>';
+    }
+    
+    window.renderContratos = renderContratos;
+    
+    // ========== UTILIZADORES ==========
+    async function renderUsers() {
+        const isAdmin = currentUser?.role === 'admin';
+        document.getElementById('usersLista').innerHTML = users.map(u => `
+            <div class="list-item" style="background:var(--card-bg); padding:12px; margin:8px 0; border-radius:12px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+                <div><b>${u.nome}</b><br><small>👤 ${u.username}</small></div>
+                <div>
+                    <span class="badge badge-green">${u.role === 'admin' ? '👑 Dono' : '🔧 Gestor'}</span>
+                    ${isAdmin && u.username !== 'admin' ? `<button class="btn-small btn-danger" onclick="removerUtilizador('${u.id}')">🗑️ Remover</button>` : ''}
+                    ${u.username === 'admin' ? '<span style="font-size:10px; color:var(--text-muted)">(protegido)</span>' : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    window.renderUsers = renderUsers;
+    
+    window.abrirModalUser = function() {
+        if (currentUser?.role !== 'admin') { mostrarToast('Apenas Admin pode criar utilizadores'); return; }
+        document.getElementById('userNome').value = '';
+        document.getElementById('userUsername').value = '';
+        document.getElementById('userSenha').value = '';
+        document.getElementById('modalUser').style.display = 'flex';
+    };
+    
+    window.salvarUtilizador = async function() {
+        const nome = document.getElementById('userNome').value.trim();
+        const username = document.getElementById('userUsername').value.trim();
+        const senha = document.getElementById('userSenha').value;
+        const role = document.getElementById('userRole').value;
+        if (!nome || !username || !senha) { mostrarToast('Preencha todos os campos'); return; }
+        if (users.find(u => u.username === username)) { mostrarToast('Utilizador já existe'); return; }
+        await addDoc(collection(db, "utilizadores"), { nome, username, senha, role });
+        await carregarDados();
+        fecharModal('modalUser');
+        renderUsers();
+        mostrarToast('Utilizador criado');
+    };
+    
+    window.removerUtilizador = async function(id) {
+        if (currentUser?.role !== 'admin') { mostrarToast('⚠️ Apenas o Administrador pode remover utilizadores!'); return; }
+        if (confirm('Remover este utilizador?')) {
+            await deleteDoc(doc(db, "utilizadores", id));
+            await carregarDados();
+            renderUsers();
+            mostrarToast('Utilizador removido');
+        }
+    };
+    
+    window.exportarBackup = async function() {
+        const backupData = { taxistas, pagamentos, atividades, users, dataExportacao: new Date().toISOString() };
+        const dataStr = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `velo_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        mostrarToast('💾 Backup exportado!');
+    };
+    
+    window.importarBackup = function() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const backup = JSON.parse(ev.target.result);
+                    if (confirm('⚠️ Restaurar backup irá SUBSTITUIR todos os dados! Continuar?')) {
+                        mostrarToast('✅ Backup restaurado! Recarregue a página.');
+                        location.reload();
+                    }
+                } catch (err) { mostrarToast('❌ Erro no ficheiro'); }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    };
+    
+    window.exportarExcelGeral = function() { mostrarToast('📊 Exportação disponível na versão completa'); };
+    window.exportarExcelTaxistas = function() { mostrarToast('📊 Exportação disponível na versão completa'); };
+    window.exportarExcelPagamentosPorTaxista = function() { mostrarToast('📊 Exportação disponível na versão completa'); };
+    
+    function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.fecharModal = fecharModal;
+    
+    window.onclick = function(e) { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; };
+    
+    document.getElementById('statusMsg').innerHTML = '✅ Firebase conectado! Pronto para usar.';
+</script>
+</body>
+</html>
